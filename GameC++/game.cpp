@@ -88,6 +88,6 @@ void Game::processInput()
 
 void Game::generateOutput()
 {
-
+	{}
 }
 
