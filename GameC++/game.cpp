@@ -15,14 +15,14 @@ bool Game::initialize(const char* gameTitle)
 	int sdlResult = SDL_Init(SDL_INIT_VIDEO);
 	if (sdlResult != 0)
 	{
-		SDL_Log("SDLを初期化できません：%s", SDL_GetError());
+		SDL_Log("failed to init SDL : %s", SDL_GetError());
 		return false;
 	}
 
 	window = SDL_CreateWindow(gameTitle, 100, 100, windowWidth, windowHeight, 0);
 	if (!window)
 	{
-		SDL_Log("ウィンドウの作成に失敗しました：%s", SDL_GetError());
+		SDL_Log("failed to create window : %s", SDL_GetError());
 		return false;
 	}
 
@@ -30,7 +30,13 @@ bool Game::initialize(const char* gameTitle)
 
 	if (!renderer)
 	{
-		SDL_Log("レンダラの作成に失敗しました：%s", SDL_GetError());
+		SDL_Log("failed to create renderer : %s", SDL_GetError());
+		return false;
+	}
+
+	if (IMG_Init(IMG_INIT_PNG) == 0)
+	{
+		SDL_Log("failed to init image : %s", SDL_GetError());
 		return false;
 	}
 }
@@ -62,43 +68,44 @@ void Game::updateGame()
 	{
 		deltaTime = 0.05f;
 	}
+	//=============================================================================
+	//                               YOUR CODE START
+	//=============================================================================
 
-	if (paddleDir != 0)
+	// 全アクターの更新
+	updatingActors = true;
+	for (auto actor : pActors)
 	{
-		paddlePos.y += paddleDir * 300.0f * deltaTime;
-		if (paddlePos.y < paddleScale / 2)
+		actor->update(deltaTime);
+	}
+	updatingActors = false;
+
+	// 待ちになっていたアクターの追加
+	for (auto pending : pPendingActors)
+	{
+		pActors.emplace_back(pending);
+	}
+	pPendingActors.clear();
+
+	// 死んだアクターを一時配列に追加
+	std::vector<Actor*>pDeadActors;
+	for (auto actor : pActors)
+	{
+		if (actor->getState() == Actor::dead)
 		{
-			paddlePos.y = paddleScale / 2;
-		}
-		else if (windowHeight - paddleScale / 2 < paddlePos.y)
-		{
-			paddlePos.y = windowHeight - paddleScale / 2;
+			pDeadActors.emplace_back(actor);
 		}
 	}
 
-	if (windowWidth - thickness <= ballPos.x + thickness / 2 && 0 <= ballVel.x) // wall side
+	// 死んだアクターを消す
+	for (auto actor : pDeadActors)
 	{
-		ballVel.x *= -1;
-	}
-	if (ballPos.x - thickness / 2 <= paddlePos.x + thickness / 2 && //xの接触
-		paddlePos.y - paddleScale / 2 < ballPos.y + thickness / 2 && //yの接触
-		paddlePos.y + paddleScale / 2 > ballPos.y - thickness / 2
-		)
-	{
-		ballVel.x *= -1;
-	}
-	if (ballPos.y - thickness / 2 <= thickness && ballVel.y < 0)
-	{
-		ballVel.y *= -1;
-	}
-	if (windowHeight - thickness <= ballPos.y + thickness / 2 && 0 < ballVel.y) // wall bottom
-	{
-		ballVel.y *= -1;
+		delete actor;
 	}
 
-	ballPos.x += ballVel.x * deltaTime;
-	ballPos.y += ballVel.y * deltaTime;
-
+	//=============================================================================
+	//                                YOUR CODE END
+	//=============================================================================
 	ticksCount = SDL_GetTicks();
 }
 

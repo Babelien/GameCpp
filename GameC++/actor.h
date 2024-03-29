@@ -17,7 +17,10 @@ public:
 	void removeComponent(class Component *pComponent);
 	void update(float deltaTime);
 	void updateComponents(float deltaTime);
-	virtual void updateActor(float deltaTime);
+	virtual void updateActor(float deltaTime); // 派生クラスの独自アップデート
+
+	void setState(State state) { this->state = state; };
+	State getState() { return state; };
 private:
 	State state;
 	Vec2 position;

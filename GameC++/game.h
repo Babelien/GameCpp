@@ -1,9 +1,11 @@
 #pragma once
-#include <SDL2/SDL.h>
+#include <SDL/SDL.h>
 #include <iostream>
 #include <vector>
 #include <algorithm>
 #include <iterator>
+#include <SDL/SDL_main.h>
+#include <SDL/SDL_image.h>
 #include "math.h"
 #include "actor.h"
 
@@ -15,9 +17,10 @@ public:
 	bool initialize(const char* gameTitle);
 	void runLoop();
 	void shutdown();
-	void setFps();
 	void addActor(Actor *pActor);
 	void removeActor(Actor *pActor);
+
+	void setFps();
 
 private:
 	void processInput();
