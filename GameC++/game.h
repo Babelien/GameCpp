@@ -1,13 +1,16 @@
 #pragma once
 #include <SDL/SDL.h>
+#include <SDL/SDL_main.h>
+#include <SDL/SDL_image.h>
 #include <iostream>
 #include <vector>
 #include <algorithm>
 #include <iterator>
-#include <SDL/SDL_main.h>
-#include <SDL/SDL_image.h>
-#include "math.h"
-#include "actor.h"
+#include <unordered_map>
+#include "Math.h"
+#include "Entity.h"
+#include "SpriteComponent.h"
+#include "AnimSpriteComponent.h"
 
 class Game
 {
@@ -17,32 +20,31 @@ public:
 	bool initialize(const char* gameTitle);
 	void runLoop();
 	void shutdown();
-	void addActor(Actor *pActor);
-	void removeActor(Actor *pActor);
-
-	void setFps();
+	void addEntity(Entity *entity);
+	void removeEntity(Entity *entity);
+	void removeSprite(class SpriteComponent* sprite);
+	SDL_Texture* loadTexture(const std::string &fileName);
+	float getIdealFrameTime();
+	SDL_Texture* getTexture(const std::string& fileName);
+	void setFps(float fps) { mFps = fps; };
+	void addSprite(SpriteComponent* sprite);
 
 private:
 	void processInput();
 	void updateGame();
 	void generateOutput();
-	float getIdealFrameTime();
+	void loadData();
 
-	int windowWidth = 1024;
-	int windowHeight = 768;
-	SDL_Window* window;
-	bool isRunning;
-	SDL_Renderer* renderer;
-	Uint32 ticksCount;
-	int fps;
-	std::vector<Actor *> pActors;
-	std::vector<Actor*> pPendingActors;
-	bool updatingActors;
-
-	Vec2 paddlePos;
-	Vec2 ballPos;
-	Vec2 ballVel;
-	const int thickness = 15;
-	const int paddleScale = 100;
-	int paddleDir;
+	int mWindowWidth = 1024;
+	int mWindowHeight = 768;
+	SDL_Window* mWindow;
+	SDL_GLContext mContext;
+	bool mIsRunning;
+	Uint32 mTicksCount;
+	int mFps;
+	std::vector<Entity *> mEntities;
+	std::vector<Entity*> mPendingEntities;
+	std::vector<SpriteComponent*>mSprites;
+	bool mUpdatingEntities;
+	std::unordered_map<std::string, SDL_Texture*> mTextures;
 };

@@ -1,3 +1,43 @@
-﻿  GameC++.vcxproj -> C:\Users\yaega\Documents\GitHub\GameC--\x64\Debug\GameC++.exe
-  C:\Users\yaega\Documents\GitHub\GameC--\GameC++\lib\SDL\x64\SDL2_image.dll
-  1 個のファイルをコピーしました
+﻿  Asteroid.cpp
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Game.h(30,34): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
+  (ソース ファイル 'Asteroid.cpp' をコンパイルしています)
+  
+  Born.cpp
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Game.h(30,34): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
+  (ソース ファイル 'Born.cpp' をコンパイルしています)
+  
+  Entity.cpp
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Game.h(30,34): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
+  (ソース ファイル 'Entity.cpp' をコンパイルしています)
+  
+  Game.cpp
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Game.h(30,34): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
+  (ソース ファイル 'Game.cpp' をコンパイルしています)
+  
+  Main.cpp
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Game.h(30,34): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
+  (ソース ファイル 'Main.cpp' をコンパイルしています)
+  
+  Ship.cpp
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Game.h(30,34): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
+  (ソース ファイル 'Ship.cpp' をコンパイルしています)
+  
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\InputComponent.h(13,58): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
+  (ソース ファイル 'Ship.cpp' をコンパイルしています)
+  
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\InputComponent.h(14,58): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
+  (ソース ファイル 'Ship.cpp' をコンパイルしています)
+  
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Ship.cpp(17,25): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Ship.cpp(18,31): warning C4244: '引数': 'const float' から 'int' への変換です。データが失われる可能性があります。
+  SpriteComponent.cpp
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Game.h(30,34): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
+  (ソース ファイル 'SpriteComponent.cpp' をコンパイルしています)
+  
+  Tile.cpp
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Game.h(30,34): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
+  (ソース ファイル 'Tile.cpp' をコンパイルしています)
+  
+  コードを生成中...
+  GameC++.vcxproj -> C:\Users\yaega\Documents\GitHub\GameCpp\x64\Debug\GameC++.exe
+  0 個のファイルをコピーしました

@@ -1,16 +1,19 @@
-#include "game.h"
+#include "Game.h"
+#include <GL/glew.h>
+#include "Born.h"
+#include "Tile.h"
+#include "Asteroid.h"
+#include "Ship.h"
 
-Game::Game() 
+Game::Game()
+	:mWindow(nullptr)
+	, mIsRunning(true)
+	, mFps(60)
 {
-	window = nullptr;
-	isRunning = true;
-	fps = 60;
-	ballPos = { static_cast<float>(windowWidth / 2), static_cast<float>(windowHeight / 2) };
-	paddlePos = { static_cast<float>(thickness / 2), static_cast<float>(windowHeight / 2) };
-	ballVel = { -200.0f, 235.0f };
+	
 }
 
-bool Game::initialize(const char* gameTitle)
+bool Game::initialize(const char* gameTitle = "Game")
 {
 	int sdlResult = SDL_Init(SDL_INIT_VIDEO);
 	if (sdlResult != 0)
@@ -19,38 +22,59 @@ bool Game::initialize(const char* gameTitle)
 		return false;
 	}
 
-	window = SDL_CreateWindow(gameTitle, 100, 100, windowWidth, windowHeight, 0);
-	if (!window)
+	// コアOpenGLプロファイルを使う
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	// バージョン3.3を指定
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+	// RGBA各チャネル8ビットのカラーバッファを使う
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+	// ダブルバッファを有効にする
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	// ハードウェアアクセラレーションを使う
+	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+
+	mWindow = SDL_CreateWindow(gameTitle, 100, 100, mWindowWidth, mWindowHeight, SDL_WINDOW_OPENGL);
+	if (!mWindow)
 	{
 		SDL_Log("failed to create window : %s", SDL_GetError());
 		return false;
 	}
 
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	mContext = SDL_GL_CreateContext(mWindow);
 
-	if (!renderer)
+	glewExperimental = GL_TRUE;
+	if (glewInit() != GLEW_OK)
 	{
-		SDL_Log("failed to create renderer : %s", SDL_GetError());
+		SDL_Log("GLEWの初期化に失敗しました。");
 		return false;
 	}
+	glGetError();
 
 	if (IMG_Init(IMG_INIT_PNG) == 0)
 	{
 		SDL_Log("failed to init image : %s", SDL_GetError());
 		return false;
 	}
+
+	loadData();
+
+	return true;
 }
 
 void Game::shutdown()
 {
-	SDL_DestroyWindow(window);
-	SDL_DestroyRenderer(renderer);
+	SDL_GL_DeleteContext(mContext);
+	SDL_DestroyWindow(mWindow);
 	SDL_Quit();
 }
 
 void Game::runLoop()
 {
-	while (isRunning)
+	while (mIsRunning)
 	{
 		processInput();
 		updateGame();
@@ -61,8 +85,8 @@ void Game::runLoop()
 void Game::updateGame()
 {
 	// フレーム制限
-	while (!SDL_TICKS_PASSED(SDL_GetTicks(), ticksCount + getIdealFrameTime()));
-	float deltaTime = (SDL_GetTicks() - ticksCount) / 1000.0f; //秒
+	while (!SDL_TICKS_PASSED(SDL_GetTicks(), mTicksCount + getIdealFrameTime()));
+	float deltaTime = (SDL_GetTicks() - mTicksCount) / 1000.0f; //秒
 
 	if (0.05f < deltaTime)
 	{
@@ -73,25 +97,25 @@ void Game::updateGame()
 	//=============================================================================
 
 	// 全アクターの更新
-	updatingActors = true;
-	for (auto actor : pActors)
+	mUpdatingEntities = true;
+	for (auto actor : mEntities)
 	{
 		actor->update(deltaTime);
 	}
-	updatingActors = false;
+	mUpdatingEntities = false;
 
 	// 待ちになっていたアクターの追加
-	for (auto pending : pPendingActors)
+	for (auto pending : mPendingEntities)
 	{
-		pActors.emplace_back(pending);
+		mEntities.emplace_back(pending);
 	}
-	pPendingActors.clear();
+	mPendingEntities.clear();
 
 	// 死んだアクターを一時配列に追加
-	std::vector<Actor*>pDeadActors;
-	for (auto actor : pActors)
+	std::vector<Entity*>pDeadActors;
+	for (auto actor : mEntities)
 	{
-		if (actor->getState() == Actor::dead)
+		if (actor->getState() == Entity::eDead)
 		{
 			pDeadActors.emplace_back(actor);
 		}
@@ -106,7 +130,7 @@ void Game::updateGame()
 	//=============================================================================
 	//                                YOUR CODE END
 	//=============================================================================
-	ticksCount = SDL_GetTicks();
+	mTicksCount = SDL_GetTicks();
 }
 
 void Game::processInput()
@@ -118,83 +142,136 @@ void Game::processInput()
 		switch (event.type)
 		{
 		case SDL_QUIT:
-			isRunning = false;
+			mIsRunning = false;
 			break;
 		}
 	}
 
-	paddleDir = 0;
 	const Uint8* state = SDL_GetKeyboardState(NULL);
 	if (state[SDL_SCANCODE_ESCAPE])
 	{
-		isRunning = false;
+		mIsRunning = false;
 	}
-	if (state[SDL_SCANCODE_UP])
+
+	mUpdatingEntities = true;
+	for (auto actor : mEntities)
 	{
-		paddleDir -= 1;
+		actor->processInput(state);
 	}
-	if (state[SDL_SCANCODE_DOWN])
-	{
-		paddleDir += 1;
-	}
+	mUpdatingEntities = false;
 }
 
 void Game::generateOutput()
 {
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-	SDL_RenderClear(renderer);
+	// 画面クリア
+	glClearColor(0, 0, 0, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
 
-	int wallCount = 3;
-	SDL_Rect* walls = new SDL_Rect[wallCount];
-	walls[0] = { 0, 0, windowWidth, thickness };
-	walls[1] = { 0, windowHeight - thickness, windowWidth, thickness };
-	walls[2] = { windowWidth - thickness, 0,thickness, windowHeight };
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-	for (int i = 0; i < wallCount; i++)
+	for (auto sprite : mSprites)
 	{
-		SDL_RenderFillRect(renderer, &walls[i]);
+		sprite->draw(mRenderer);
 	}
 
-	SDL_Rect ball = { (ballPos.x - thickness / 2), (ballPos.y - thickness / 2) ,thickness, thickness};
-	SDL_RenderFillRect(renderer, &ball);
+	SDL_GL_SwapWindow(mWindow);
 
-	SDL_Rect paddle = { paddlePos.x - thickness / 2, paddlePos.y - paddleScale / 2, thickness, paddleScale };
-	SDL_RenderFillRect(renderer, &paddle);
-
-	SDL_RenderPresent(renderer);
 }
 
-void Game::addActor(Actor* pActor)
+void Game::addEntity(Entity* entity)
 {
-	if (!updatingActors)
+	if (!mUpdatingEntities)
 	{
-		pActors.emplace_back(pActor);
+		mEntities.emplace_back(entity);
 	}
 	else
 	{
-		pPendingActors.emplace_back(pActor);
+		mPendingEntities.emplace_back(entity);
 	}
 }
 
-void Game::removeActor(Actor* pActor)
+void Game::removeEntity(Entity* entity)
 {
-	auto iter = std::find(pActors.begin(), pActors.end(), pActor);
-	if (iter != pActors.end())
+	auto iter = std::find(mEntities.begin(), mEntities.end(), entity);
+	if (iter != mEntities.end())
 	{
-		std::iter_swap(iter, pActors.end() - 1);
-		pActors.pop_back();
+		std::iter_swap(iter, mEntities.end() - 1);
+		mEntities.pop_back();
 	};
 
-	iter = std::find(pPendingActors.begin(), pPendingActors.end(), pActor);
-	if (iter != pPendingActors.end())
+	iter = std::find(mPendingEntities.begin(), mPendingEntities.end(), entity);
+	if (iter != mPendingEntities.end())
 	{
-		std::iter_swap(iter, pPendingActors.end() - 1);
-		pPendingActors.pop_back();
+		std::iter_swap(iter, mPendingEntities.end() - 1);
+		mPendingEntities.pop_back();
 	}
+}
+
+void Game::loadData() {
+	const int numAsteroid = 20;
+
+	for (int i = 0; i < numAsteroid; i++)
+	{
+		new Asteroid(this);
+	}
+
+	Entity* actor = new Ship(this);
+	addEntity(actor);
 }
 
 float Game::getIdealFrameTime()
 {
-	return 1000.0f / fps;
+	return 1000.0f / mFps;
 }
 
+SDL_Texture* Game::loadTexture(const std::string& fileName)
+{
+	SDL_Surface* surface = IMG_Load(fileName.c_str());
+	if (!surface)
+	{
+		SDL_Log("failed to load img %s", fileName.c_str());
+		return nullptr;
+	}
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(mRenderer, surface);
+	SDL_FreeSurface(surface);
+	if (!texture)
+	{
+		SDL_Log("failed to convert surface to texture for %s", fileName.c_str());
+		return nullptr;
+	}
+	return texture;
+}
+
+SDL_Texture* Game::getTexture(const std::string& fileName)
+{
+	SDL_Texture* tex = nullptr;
+	auto iter = mTextures.find(fileName);
+	if (iter != mTextures.end())
+	{
+		tex = iter->second;
+	}
+	else
+	{
+		tex = loadTexture(fileName);
+		mTextures.emplace(fileName.c_str(), tex);
+	}
+	return tex;
+}
+
+void Game::addSprite(SpriteComponent* sprite)
+{
+	auto iter = mSprites.begin();
+	for (; iter != mSprites.end(); iter++)
+	{
+		if (sprite->getDrawOrder() < (*iter)->getDrawOrder())
+		{
+			break;
+		}
+	}
+	//イテレータの位置の前に挿入
+	mSprites.insert(iter, sprite);
+}
+
+void Game::removeSprite(SpriteComponent* sprite)
+{
+	auto iter = std::find(mSprites.begin(), mSprites.end(), sprite);
+	mSprites.erase(iter);
+}
