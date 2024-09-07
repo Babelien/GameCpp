@@ -9,7 +9,7 @@ CircleComponent::CircleComponent(Entity* owner)
 
 float CircleComponent::getRadius() const
 {
-	return mOwner->getScale() * mRadius;
+	return mOwner->getScale().x * mRadius;
 }
 
 const Vec2& CircleComponent::getCenter() const

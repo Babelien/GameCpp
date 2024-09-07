@@ -1,12 +1,15 @@
 #include "Game.h"
-#include <GL/glew.h>
-#include "Born.h"
-#include "Tile.h"
+#include "Shader.h"
+#include "VertexArray.h"
+#include "Texture.h"
+#include "Renderer.h"
 #include "Asteroid.h"
 #include "Ship.h"
+#include "TileMapArranger.h"
 
 Game::Game()
-	:mWindow(nullptr)
+	: mWindow(nullptr)
+	, mContext(nullptr)
 	, mIsRunning(true)
 	, mFps(60)
 {
@@ -15,50 +18,8 @@ Game::Game()
 
 bool Game::initialize(const char* gameTitle = "Game")
 {
-	int sdlResult = SDL_Init(SDL_INIT_VIDEO);
-	if (sdlResult != 0)
-	{
-		SDL_Log("failed to init SDL : %s", SDL_GetError());
-		return false;
-	}
-
-	// コアOpenGLプロファイルを使う
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-	// バージョン3.3を指定
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-	// RGBA各チャネル8ビットのカラーバッファを使う
-	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-	// ダブルバッファを有効にする
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	// ハードウェアアクセラレーションを使う
-	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-
-	mWindow = SDL_CreateWindow(gameTitle, 100, 100, mWindowWidth, mWindowHeight, SDL_WINDOW_OPENGL);
-	if (!mWindow)
-	{
-		SDL_Log("failed to create window : %s", SDL_GetError());
-		return false;
-	}
-
-	mContext = SDL_GL_CreateContext(mWindow);
-
-	glewExperimental = GL_TRUE;
-	if (glewInit() != GLEW_OK)
-	{
-		SDL_Log("GLEWの初期化に失敗しました。");
-		return false;
-	}
-	glGetError();
-
-	if (IMG_Init(IMG_INIT_PNG) == 0)
-	{
-		SDL_Log("failed to init image : %s", SDL_GetError());
-		return false;
-	}
+	mRenderer = new Renderer();
+	mRenderer->initialize(mWindowWidth, mWindowHeight, gameTitle);
 
 	loadData();
 
@@ -67,9 +28,7 @@ bool Game::initialize(const char* gameTitle = "Game")
 
 void Game::shutdown()
 {
-	SDL_GL_DeleteContext(mContext);
-	SDL_DestroyWindow(mWindow);
-	SDL_Quit();
+	mRenderer->shutdown();
 }
 
 void Game::runLoop()
@@ -92,9 +51,6 @@ void Game::updateGame()
 	{
 		deltaTime = 0.05f;
 	}
-	//=============================================================================
-	//                               YOUR CODE START
-	//=============================================================================
 
 	// 全アクターの更新
 	mUpdatingEntities = true;
@@ -107,6 +63,7 @@ void Game::updateGame()
 	// 待ちになっていたアクターの追加
 	for (auto pending : mPendingEntities)
 	{
+		pending->computeWorldTransform();
 		mEntities.emplace_back(pending);
 	}
 	mPendingEntities.clear();
@@ -127,9 +84,6 @@ void Game::updateGame()
 		delete actor;
 	}
 
-	//=============================================================================
-	//                                YOUR CODE END
-	//=============================================================================
 	mTicksCount = SDL_GetTicks();
 }
 
@@ -163,16 +117,7 @@ void Game::processInput()
 
 void Game::generateOutput()
 {
-	// 画面クリア
-	glClearColor(0, 0, 0, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	for (auto sprite : mSprites)
-	{
-		sprite->draw(mRenderer);
-	}
-
-	SDL_GL_SwapWindow(mWindow);
+	mRenderer->draw();
 
 }
 
@@ -205,73 +150,26 @@ void Game::removeEntity(Entity* entity)
 	}
 }
 
-void Game::loadData() {
-	const int numAsteroid = 20;
+void Game::loadData() 
+{
+	// CreateMap
+	TileMapArranger* ta = new TileMapArranger(this);
+	ta->setTexture(getRenderer()->getTexture("Assets/TileMap/Tiles.png"));
+	ta->setTileMap("Assets/TileMap/Map.csv");
+	ta->arrange();
+}
 
-	for (int i = 0; i < numAsteroid; i++)
+void Game::unloadData()
+{
+	while (!mEntities.empty())
 	{
-		new Asteroid(this);
+		delete mEntities.back();
 	}
 
-	Entity* actor = new Ship(this);
-	addEntity(actor);
+	mRenderer->unloadData();
 }
 
 float Game::getIdealFrameTime()
 {
 	return 1000.0f / mFps;
-}
-
-SDL_Texture* Game::loadTexture(const std::string& fileName)
-{
-	SDL_Surface* surface = IMG_Load(fileName.c_str());
-	if (!surface)
-	{
-		SDL_Log("failed to load img %s", fileName.c_str());
-		return nullptr;
-	}
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(mRenderer, surface);
-	SDL_FreeSurface(surface);
-	if (!texture)
-	{
-		SDL_Log("failed to convert surface to texture for %s", fileName.c_str());
-		return nullptr;
-	}
-	return texture;
-}
-
-SDL_Texture* Game::getTexture(const std::string& fileName)
-{
-	SDL_Texture* tex = nullptr;
-	auto iter = mTextures.find(fileName);
-	if (iter != mTextures.end())
-	{
-		tex = iter->second;
-	}
-	else
-	{
-		tex = loadTexture(fileName);
-		mTextures.emplace(fileName.c_str(), tex);
-	}
-	return tex;
-}
-
-void Game::addSprite(SpriteComponent* sprite)
-{
-	auto iter = mSprites.begin();
-	for (; iter != mSprites.end(); iter++)
-	{
-		if (sprite->getDrawOrder() < (*iter)->getDrawOrder())
-		{
-			break;
-		}
-	}
-	//イテレータの位置の前に挿入
-	mSprites.insert(iter, sprite);
-}
-
-void Game::removeSprite(SpriteComponent* sprite)
-{
-	auto iter = std::find(mSprites.begin(), mSprites.end(), sprite);
-	mSprites.erase(iter);
 }

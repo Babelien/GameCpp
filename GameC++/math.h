@@ -237,7 +237,7 @@ public:
 	}
 
 	// Transform vector by matrix
-	static Vec2 Transform(const Vec2& vec, const class Matrix3& mat, float w = 1.0f);
+	static Vec2 Transform(const Vec2& vec, const class Mat3& mat, float w = 1.0f);
 
 	static const Vec2 Zero;
 	static const Vec2 UnitX;
@@ -394,9 +394,9 @@ public:
 		return v - 2.0f * Vec3::Dot(v, n) * n;
 	}
 
-	static Vec3 Transform(const Vec3& vec, const class Matrix4& mat, float w = 1.0f);
+	static Vec3 Transform(const Vec3& vec, const class Mat4& mat, float w = 1.0f);
 	// This will transform the vector and renormalize the w component
-	static Vec3 TransformWithPerspDiv(const Vec3& vec, const class Matrix4& mat, float w = 1.0f);
+	static Vec3 TransformWithPerspDiv(const Vec3& vec, const class Mat4& mat, float w = 1.0f);
 
 	// Transform a Vector3 by a quaternion
 	static Vec3 Transform(const Vec3& v, const class Quaternion& q);
@@ -413,17 +413,17 @@ public:
 };
 
 // 3x3 Matrix
-class Matrix3
+class Mat3
 {
 public:
 	float mat[3][3];
 
-	Matrix3()
+	Mat3()
 	{
-		*this = Matrix3::Identity;
+		*this = Mat3::Identity;
 	}
 
-	explicit Matrix3(float inMat[3][3])
+	explicit Mat3(float inMat[3][3])
 	{
 		memcpy(mat, inMat, 9 * sizeof(float));
 	}
@@ -435,9 +435,9 @@ public:
 	}
 
 	// Matrix multiplication
-	friend Matrix3 operator*(const Matrix3& left, const Matrix3& right)
+	friend Mat3 operator*(const Mat3& left, const Mat3& right)
 	{
-		Matrix3 retVal;
+		Mat3 retVal;
 		// row 0
 		retVal.mat[0][0] = 
 			left.mat[0][0] * right.mat[0][0] +
@@ -489,14 +489,14 @@ public:
 		return retVal;
 	}
 
-	Matrix3& operator*=(const Matrix3& right)
+	Mat3& operator*=(const Mat3& right)
 	{
 		*this = *this * right;
 		return *this;
 	}
 
 	// Create a scale matrix with x and y scales
-	static Matrix3 CreateScale(float xScale, float yScale)
+	static Mat3 CreateScale(float xScale, float yScale)
 	{
 		float temp[3][3] =
 		{
@@ -504,23 +504,23 @@ public:
 			{ 0.0f, yScale, 0.0f },
 			{ 0.0f, 0.0f, 1.0f },
 		};
-		return Matrix3(temp);
+		return Mat3(temp);
 	}
 
-	static Matrix3 CreateScale(const Vec2& scaleVector)
+	static Mat3 CreateScale(const Vec2& scaleVector)
 	{
 		return CreateScale(scaleVector.x, scaleVector.y);
 	}
 
 	// Create a scale matrix with a uniform factor
-	static Matrix3 CreateScale(float scale)
+	static Mat3 CreateScale(float scale)
 	{
 		return CreateScale(scale, scale);
 	}
 
 	// Create a rotation matrix about the Z axis
 	// theta is in radians
-	static Matrix3 CreateRotation(float theta)
+	static Mat3 CreateRotation(float theta)
 	{
 		float temp[3][3] =
 		{
@@ -528,11 +528,11 @@ public:
 			{ -Math::Sin(theta), Math::Cos(theta), 0.0f },
 			{ 0.0f, 0.0f, 1.0f },
 		};
-		return Matrix3(temp);
+		return Mat3(temp);
 	}
 
 	// Create a translation matrix (on the xy-plane)
-	static Matrix3 CreateTranslation(const Vec2& trans)
+	static Mat3 CreateTranslation(const Vec2& trans)
 	{
 		float temp[3][3] =
 		{
@@ -540,24 +540,24 @@ public:
 			{ 0.0f, 1.0f, 0.0f },
 			{ trans.x, trans.y, 1.0f },
 		};
-		return Matrix3(temp);
+		return Mat3(temp);
 	}
 
-	static const Matrix3 Identity;
+	static const Mat3 Identity;
 };
 
 // 4x4 Matrix
-class Matrix4
+class Mat4
 {
 public:
 	float mat[4][4];
 
-	Matrix4()
+	Mat4()
 	{
-		*this = Matrix4::Identity;
+		*this = Mat4::Identity;
 	}
 
-	explicit Matrix4(float inMat[4][4])
+	explicit Mat4(float inMat[4][4])
 	{
 		memcpy(mat, inMat, 16 * sizeof(float));
 	}
@@ -569,9 +569,9 @@ public:
 	}
 
 	// Matrix multiplication (a * b)
-	friend Matrix4 operator*(const Matrix4& a, const Matrix4& b)
+	friend Mat4 operator*(const Mat4& a, const Mat4& b)
 	{
-		Matrix4 retVal;
+		Mat4 retVal;
 		// row 0
 		retVal.mat[0][0] = 
 			a.mat[0][0] * b.mat[0][0] + 
@@ -675,7 +675,7 @@ public:
 		return retVal;
 	}
 
-	Matrix4& operator*=(const Matrix4& right)
+	Mat4& operator*=(const Mat4& right)
 	{
 		*this = *this * right;
 		return *this;
@@ -719,7 +719,7 @@ public:
 	}
 
 	// Create a scale matrix with x, y, and z scales
-	static Matrix4 CreateScale(float xScale, float yScale, float zScale)
+	static Mat4 CreateScale(float xScale, float yScale, float zScale)
 	{
 		float temp[4][4] =
 		{
@@ -728,22 +728,22 @@ public:
 			{ 0.0f, 0.0f, zScale, 0.0f },
 			{ 0.0f, 0.0f, 0.0f, 1.0f }
 		};
-		return Matrix4(temp);
+		return Mat4(temp);
 	}
 
-	static Matrix4 CreateScale(const Vec3& scaleVector)
+	static Mat4 CreateScale(const Vec3& scaleVector)
 	{
 		return CreateScale(scaleVector.x, scaleVector.y, scaleVector.z);
 	}
 
 	// Create a scale matrix with a uniform factor
-	static Matrix4 CreateScale(float scale)
+	static Mat4 CreateScale(float scale)
 	{
 		return CreateScale(scale, scale, scale);
 	}
 
 	// Rotation about x-axis
-	static Matrix4 CreateRotationX(float theta)
+	static Mat4 CreateRotationX(float theta)
 	{
 		float temp[4][4] =
 		{
@@ -752,11 +752,11 @@ public:
 			{ 0.0f, -Math::Sin(theta), Math::Cos(theta), 0.0f },
 			{ 0.0f, 0.0f, 0.0f, 1.0f },
 		};
-		return Matrix4(temp);
+		return Mat4(temp);
 	}
 
 	// Rotation about y-axis
-	static Matrix4 CreateRotationY(float theta)
+	static Mat4 CreateRotationY(float theta)
 	{
 		float temp[4][4] =
 		{
@@ -765,11 +765,11 @@ public:
 			{ Math::Sin(theta), 0.0f, Math::Cos(theta), 0.0f },
 			{ 0.0f, 0.0f, 0.0f, 1.0f },
 		};
-		return Matrix4(temp);
+		return Mat4(temp);
 	}
 
 	// Rotation about z-axis
-	static Matrix4 CreateRotationZ(float theta)
+	static Mat4 CreateRotationZ(float theta)
 	{
 		float temp[4][4] =
 		{
@@ -778,13 +778,13 @@ public:
 			{ 0.0f, 0.0f, 1.0f, 0.0f },
 			{ 0.0f, 0.0f, 0.0f, 1.0f },
 		};
-		return Matrix4(temp);
+		return Mat4(temp);
 	}
 
 	// Create a rotation matrix from a quaternion
-	static Matrix4 CreateFromQuaternion(const class Quaternion& q);
+	static Mat4 CreateFromQuaternion(const class Quaternion& q);
 
-	static Matrix4 CreateTranslation(const Vec3& trans)
+	static Mat4 CreateTranslation(const Vec3& trans)
 	{
 		float temp[4][4] =
 		{
@@ -793,10 +793,10 @@ public:
 			{ 0.0f, 0.0f, 1.0f, 0.0f },
 			{ trans.x, trans.y, trans.z, 1.0f }
 		};
-		return Matrix4(temp);
+		return Mat4(temp);
 	}
 
-	static Matrix4 CreateLookAt(const Vec3& eye, const Vec3& target, const Vec3& up)
+	static Mat4 CreateLookAt(const Vec3& eye, const Vec3& target, const Vec3& up)
 	{
 		Vec3 zaxis = Vec3::Normalize(target - eye);
 		Vec3 xaxis = Vec3::Normalize(Vec3::Cross(up, zaxis));
@@ -813,10 +813,10 @@ public:
 			{ xaxis.z, yaxis.z, zaxis.z, 0.0f },
 			{ trans.x, trans.y, trans.z, 1.0f }
 		};
-		return Matrix4(temp);
+		return Mat4(temp);
 	}
 
-	static Matrix4 CreateOrtho(float width, float height, float near, float far)
+	static Mat4 CreateOrtho(float width, float height, float near, float far)
 	{
 		float temp[4][4] =
 		{
@@ -825,10 +825,10 @@ public:
 			{ 0.0f, 0.0f, 1.0f / (far - near), 0.0f },
 			{ 0.0f, 0.0f, near / (near - far), 1.0f }
 		};
-		return Matrix4(temp);
+		return Mat4(temp);
 	}
 
-	static Matrix4 CreatePerspectiveFOV(float fovY, float width, float height, float near, float far)
+	static Mat4 CreatePerspectiveFOV(float fovY, float width, float height, float near, float far)
 	{
 		float yScale = Math::Cot(fovY / 2.0f);
 		float xScale = yScale * height / width;
@@ -839,11 +839,11 @@ public:
 			{ 0.0f, 0.0f, far / (far - near), 1.0f },
 			{ 0.0f, 0.0f, -near * far / (far - near), 0.0f }
 		};
-		return Matrix4(temp);
+		return Mat4(temp);
 	}
 
 	// Create "Simple" View-Projection Matrix from Chapter 6
-	static Matrix4 CreateSimpleViewProj(float width, float height)
+	static Mat4 CreateSimpleViewProj(float width, float height)
 	{
 		float temp[4][4] =
 		{
@@ -852,10 +852,10 @@ public:
 			{ 0.0f, 0.0f, 1.0f, 0.0f },
 			{ 0.0f, 0.0f, 1.0f, 1.0f }
 		};
-		return Matrix4(temp);
+		return Mat4(temp);
 	}
 	
-	static const Matrix4 Identity;
+	static const Mat4 Identity;
 };
 
 // (Unit) Quaternion

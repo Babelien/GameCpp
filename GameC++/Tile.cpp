@@ -1,12 +1,11 @@
 #include "Tile.h"
 #include "Game.h"
-#include "TileMapComponent.h"
+#include "Texture.h"
+#include "Renderer.h"
+#include "SpriteComponent.h"
 
-Tile::Tile(Game* game)
+Tile::Tile(Game* game, int drawOrder)
 	:Entity(game)
 {
-	TileMapComponent* tmc = new TileMapComponent(this);
-	tmc->setTexture(getGame()->getTexture("Assets/Tiles.png"));
-	tmc->setTileMap("Assets/MapLayer1.csv");
-	addComponent(tmc);
+	mSprite = new SpriteComponent(this, drawOrder);
 }

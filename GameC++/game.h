@@ -1,7 +1,5 @@
 #pragma once
 #include <SDL/SDL.h>
-#include <SDL/SDL_main.h>
-#include <SDL/SDL_image.h>
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -22,23 +20,23 @@ public:
 	void shutdown();
 	void addEntity(Entity *entity);
 	void removeEntity(Entity *entity);
-	void removeSprite(class SpriteComponent* sprite);
-	SDL_Texture* loadTexture(const std::string &fileName);
 	float getIdealFrameTime();
-	SDL_Texture* getTexture(const std::string& fileName);
 	void setFps(float fps) { mFps = fps; };
-	void addSprite(SpriteComponent* sprite);
-
+	class Renderer* getRenderer() const { return mRenderer; }
 private:
 	void processInput();
 	void updateGame();
 	void generateOutput();
 	void loadData();
+	void unloadData();
+	bool loadShaders();
+	void createSpriteVerts();
 
 	int mWindowWidth = 1024;
 	int mWindowHeight = 768;
 	SDL_Window* mWindow;
 	SDL_GLContext mContext;
+	class Renderer* mRenderer;
 	bool mIsRunning;
 	Uint32 mTicksCount;
 	int mFps;
@@ -46,5 +44,7 @@ private:
 	std::vector<Entity*> mPendingEntities;
 	std::vector<SpriteComponent*>mSprites;
 	bool mUpdatingEntities;
-	std::unordered_map<std::string, SDL_Texture*> mTextures;
+	std::unordered_map<std::string, class Texture*> mTextures;
+	class Shader* mSpriteShader;
+	class VertexArray* mSpriteVerts;
 };

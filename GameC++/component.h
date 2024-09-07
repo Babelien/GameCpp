@@ -7,6 +7,7 @@ public:
 	virtual ~Component();
 	virtual void update(float deltaTime);
 	virtual void processInput(const uint8_t* keyState) {}
+	virtual void onUpdateWorldTransform() {};
 	int getUpdateOrder() const { return mUpdateOrder; }
 
 protected:

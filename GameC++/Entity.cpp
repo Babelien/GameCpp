@@ -7,8 +7,9 @@ Entity::Entity(Game* game)
 	:mGame(game)
 	, mState(eActive)
 	, mPosition(Vec2::Zero)
-	, mScale(1.0f)
+	, mScale(Vec2(1.0f, 1.0f))
 	, mRotation(0.0f)
+	, mRecomputeWorldTransform(true)
 {
 	mGame->addEntity(this);
 }
@@ -46,8 +47,10 @@ void ::Entity::update(float deltaTime)
 {
 	if (mState == eActive)
 	{
+		computeWorldTransform();
 		updateComponents(deltaTime);
-		updateActor(deltaTime);
+		updateEntity(deltaTime);
+		computeWorldTransform();
 	}
 }
 
@@ -67,7 +70,23 @@ void Entity::processInput(const uint8_t* keyState)
 	}
 }
 
+void Entity::computeWorldTransform()
+{
+	if (mRecomputeWorldTransform)
+	{
+		mRecomputeWorldTransform = false;
+		mWorldTransform = Mat4::CreateScale(Vec3(mScale.x, mScale.y, 1.0f));
+		mWorldTransform *= Mat4::CreateRotationZ(mRotation);
+		mWorldTransform *= Mat4::CreateTranslation(Vec3(mPosition.x, mPosition.y, 0.0f));
+	}
+
+	for (auto comp : mComponents)
+	{
+		comp->onUpdateWorldTransform();
+	}
+}
 
 
-void Entity::updateActor(float deltaTime) {}
-void Entity::actorInput(const uint8_t* keyState) {}
+
+void Entity::updateEntity(float deltaTime) {}
+void Entity::entityInput(const uint8_t* keyState) {}

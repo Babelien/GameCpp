@@ -30,7 +30,7 @@ static float m3Ident[3][3] =
 	{ 0.0f, 1.0f, 0.0f },
 	{ 0.0f, 0.0f, 1.0f }
 };
-const Matrix3 Matrix3::Identity(m3Ident);
+const Mat3 Mat3::Identity(m3Ident);
 
 static float m4Ident[4][4] =
 {
@@ -40,11 +40,11 @@ static float m4Ident[4][4] =
 	{ 0.0f, 0.0f, 0.0f, 1.0f }
 };
 
-const Matrix4 Matrix4::Identity(m4Ident);
+const Mat4 Mat4::Identity(m4Ident);
 
 const Quaternion Quaternion::Identity(0.0f, 0.0f, 0.0f, 1.0f);
 
-Vec2 Vec2::Transform(const Vec2& vec, const Matrix3& mat, float w /*= 1.0f*/)
+Vec2 Vec2::Transform(const Vec2& vec, const Mat3& mat, float w /*= 1.0f*/)
 {
 	Vec2 retVal;
 	retVal.x = vec.x * mat.mat[0][0] + vec.y * mat.mat[1][0] + w * mat.mat[2][0];
@@ -53,7 +53,7 @@ Vec2 Vec2::Transform(const Vec2& vec, const Matrix3& mat, float w /*= 1.0f*/)
 	return retVal;
 }
 
-Vec3 Vec3::Transform(const Vec3& vec, const Matrix4& mat, float w /*= 1.0f*/)
+Vec3 Vec3::Transform(const Vec3& vec, const Mat4& mat, float w /*= 1.0f*/)
 {
 	Vec3 retVal;
 	retVal.x = vec.x * mat.mat[0][0] + vec.y * mat.mat[1][0] +
@@ -67,7 +67,7 @@ Vec3 Vec3::Transform(const Vec3& vec, const Matrix4& mat, float w /*= 1.0f*/)
 }
 
 // This will transform the vector and renormalize the w component
-Vec3 Vec3::TransformWithPerspDiv(const Vec3& vec, const Matrix4& mat, float w /*= 1.0f*/)
+Vec3 Vec3::TransformWithPerspDiv(const Vec3& vec, const Mat4& mat, float w /*= 1.0f*/)
 {
 	Vec3 retVal;
 	retVal.x = vec.x * mat.mat[0][0] + vec.y * mat.mat[1][0] +
@@ -96,7 +96,7 @@ Vec3 Vec3::Transform(const Vec3& v, const Quaternion& q)
 	return retVal;
 }
 
-void Matrix4::Invert()
+void Mat4::Invert()
 {
 	// Thanks slow math
 	// This is a really janky way to unroll everything...
@@ -211,7 +211,7 @@ void Matrix4::Invert()
 	}
 }
 
-Matrix4 Matrix4::CreateFromQuaternion(const class Quaternion& q)
+Mat4 Mat4::CreateFromQuaternion(const class Quaternion& q)
 {
 	float mat[4][4];
 	
@@ -235,5 +235,5 @@ Matrix4 Matrix4::CreateFromQuaternion(const class Quaternion& q)
 	mat[3][2] = 0.0f;
 	mat[3][3] = 1.0f;
 
-	return Matrix4(mat);
+	return Mat4(mat);
 }

@@ -1,5 +1,8 @@
 #include "BGSpriteComponent.h"
 #include "Entity.h"
+#include "Shader.h"
+#include "Texture.h"
+#include <SDL/SDL.h>
 
 BGSpriteComponent::BGSpriteComponent(class Entity* owner, int drawOrder)
 	:SpriteComponent(owner, drawOrder)
@@ -7,7 +10,7 @@ BGSpriteComponent::BGSpriteComponent(class Entity* owner, int drawOrder)
 
 }
 
-void BGSpriteComponent::setBGTextures(const std::vector<SDL_Texture*>& textures)
+void BGSpriteComponent::setBGTextures(const std::vector<Texture*>& textures)
 {
 	for (int i = 0; i < textures.size(); i++)
 	{
@@ -19,7 +22,7 @@ void BGSpriteComponent::setBGTextures(const std::vector<SDL_Texture*>& textures)
 	}
 }
 
-void BGSpriteComponent::draw(SDL_Renderer* renderer)
+void BGSpriteComponent::draw(Shader* shader)
 {
 	for (auto& bg : mBGTextures)
 	{
@@ -29,7 +32,7 @@ void BGSpriteComponent::draw(SDL_Renderer* renderer)
 		r.x = static_cast<int>(mOwner->getPosition().x - r.w / 2 + bg.mOffset.x);
 		r.y = static_cast<int>(mOwner->getPosition().y - r.h / 2 + bg.mOffset.y);
 
-		SDL_RenderCopy(renderer, bg.mTexture, nullptr, &r);
+		//SDL_RenderCopy(renderer, bg.mTexture, nullptr, &r);
 	}
 }
 

@@ -1,0 +1,23 @@
+﻿  SpriteComponent.cpp
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Game.h(24,34): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Renderer.h(24,18): warning C4099: 'SDL_Window': タイプ名は最初 'struct' として使われていましたが 'class' として使われています。
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\include\SDL\SDL_video.h(95,16): message : 'SDL_Window' の宣言を確認してください
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\SpriteComponent.cpp(41,21): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\SpriteComponent.cpp(40,21): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
+  Tile.cpp
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Game.h(24,34): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Renderer.h(24,18): warning C4099: 'SDL_Window': タイプ名は最初 'struct' として使われていましたが 'class' として使われています。
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\include\SDL\SDL_video.h(95,16): message : 'SDL_Window' の宣言を確認してください
+  TileMapArranger.cpp
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Game.h(24,34): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\TileMapArranger.cpp(34,24): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\TileMapArranger.cpp(36,25): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\TileMapArranger.cpp(41,35): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\TileMapArranger.cpp(41,30): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\TileMapArranger.cpp(41,25): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\TileMapArranger.cpp(43,35): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\TileMapArranger.cpp(44,36): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\TileMapArranger.cpp(78,15): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\TileMapArranger.cpp(79,15): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
+  コードを生成中...
+  GameC++.vcxproj -> C:\Users\yaega\Documents\GitHub\GameCpp\Debug\GameC++.exe

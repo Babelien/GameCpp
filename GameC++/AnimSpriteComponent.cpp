@@ -1,5 +1,6 @@
 #include "AnimSpriteComponent.h"
 #include "Entity.h"
+#include "Texture.h"
 #include <vector>
 
 AnimSpriteComponent::AnimSpriteComponent(Entity* owner, int drawOrder)
@@ -10,7 +11,7 @@ AnimSpriteComponent::AnimSpriteComponent(Entity* owner, int drawOrder)
 
 }
 
-void AnimSpriteComponent::setAnimTextures(const std::vector<SDL_Texture*>& textures)
+void AnimSpriteComponent::setAnimTextures(const std::vector<Texture*>& textures)
 {
 	mAnimTextures = textures;
 	setTexture(textures[0]);

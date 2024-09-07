@@ -1,43 +1,7 @@
-﻿  Asteroid.cpp
-C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Game.h(30,34): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
-  (ソース ファイル 'Asteroid.cpp' をコンパイルしています)
-  
-  Born.cpp
-C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Game.h(30,34): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
-  (ソース ファイル 'Born.cpp' をコンパイルしています)
-  
-  Entity.cpp
-C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Game.h(30,34): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
-  (ソース ファイル 'Entity.cpp' をコンパイルしています)
-  
-  Game.cpp
-C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Game.h(30,34): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
-  (ソース ファイル 'Game.cpp' をコンパイルしています)
-  
-  Main.cpp
-C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Game.h(30,34): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
-  (ソース ファイル 'Main.cpp' をコンパイルしています)
-  
-  Ship.cpp
-C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Game.h(30,34): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
-  (ソース ファイル 'Ship.cpp' をコンパイルしています)
-  
-C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\InputComponent.h(13,58): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
-  (ソース ファイル 'Ship.cpp' をコンパイルしています)
-  
-C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\InputComponent.h(14,58): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
-  (ソース ファイル 'Ship.cpp' をコンパイルしています)
-  
-C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Ship.cpp(17,25): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Ship.cpp(18,31): warning C4244: '引数': 'const float' から 'int' への変換です。データが失われる可能性があります。
-  SpriteComponent.cpp
-C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Game.h(30,34): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
-  (ソース ファイル 'SpriteComponent.cpp' をコンパイルしています)
-  
-  Tile.cpp
-C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\Game.h(30,34): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
-  (ソース ファイル 'Tile.cpp' をコンパイルしています)
-  
-  コードを生成中...
-  GameC++.vcxproj -> C:\Users\yaega\Documents\GitHub\GameCpp\x64\Debug\GameC++.exe
-  0 個のファイルをコピーしました
+﻿glew32sd.lib(glew.obj) : warning LNK4099: PDB '' が 'glew32sd.lib(glew.obj)' で、または '' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+Texture.obj : error LNK2019: 未解決の外部シンボル SOIL_load_image が関数 "public: bool __cdecl Texture::load(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &)" (?load@Texture@@QEAA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) で参照されました
+Texture.obj : error LNK2019: 未解決の外部シンボル SOIL_free_image_data が関数 "public: bool __cdecl Texture::load(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &)" (?load@Texture@@QEAA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) で参照されました
+Texture.obj : error LNK2019: 未解決の外部シンボル SOIL_last_result が関数 "public: bool __cdecl Texture::load(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &)" (?load@Texture@@QEAA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) で参照されました
+SDL2main.lib(SDL_windows_main.obj) : error LNK2019: 未解決の外部シンボル __imp_CommandLineToArgvW が関数 main_getcmdline で参照されました
+C:\Users\yaega\Documents\GitHub\GameCpp\GameC++\lib\SOIL\SOIL.lib : warning LNK4272: ライブラリのコンピューターの種類 'x86' がターゲットのコンピューターの種類' x64' と競合しています
+C:\Users\yaega\Documents\GitHub\GameCpp\x64\Debug\GameC++.exe : fatal error LNK1120: 4 件の未解決の外部参照
