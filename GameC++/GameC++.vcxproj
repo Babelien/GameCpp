@@ -82,7 +82,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>opengl32.lib;Shell32.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;SOIL.lib;glew32sd.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)lib\SDL\$(PlatformTarget);$(ProjectDir)lib\GLEW\$(PlatformTarget)\$(Configuration);$(ProjectDir)lib\SOIL</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)lib\SDL\$(PlatformTarget);$(ProjectDir)lib\SOIL;$(ProjectDir)lib\GLEW\$(PlatformTarget)\$(Configuration)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -101,7 +101,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>opengl32.lib;Shell32.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;SOIL.lib;glew32s.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)lib\SDL\$(PlatformTarget);$(ProjectDir)lib\GLEW\$(PlatformTarget)\$(Configuration);$(ProjectDir)lib\SOIL</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)lib\SDL\$(PlatformTarget);$(ProjectDir)lib\SOIL;$(ProjectDir)lib\GLEW\$(PlatformTarget)\$(Configuration)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

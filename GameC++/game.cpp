@@ -155,7 +155,7 @@ void Game::loadData()
 	// CreateMap
 	TileMapArranger* ta = new TileMapArranger(this);
 	ta->setTexture(getRenderer()->getTexture("Assets/TileMap/Tiles.png"));
-	ta->setTileMap("Assets/TileMap/Map.csv");
+	ta->setTileMap("Assets/TileMap/Map.tmj");
 	ta->arrange();
 }
 

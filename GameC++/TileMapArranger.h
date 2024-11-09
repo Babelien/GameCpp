@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <nlohmann/json.hpp>
 #include "math.h"
 
 class TileMapArranger
@@ -15,14 +16,16 @@ public:
 	void setTextureWidth(float width) { mTextureWidth = width; }
 	void setTextureHeight(float height) { mTextureHeight = height; }
 	class Texture* getTexture() const { return mTexture; }
+	Vec2 culcTilePos(int row, int col);
 private:
 	class VertexArray* createSpriteVerts(int tileNumber);
 	class Game* mGame;
 	std::vector<std::string> split(std::string& str, char delimiter);
-	std::vector<std::vector<int>>mTileMap;
+	nlohmann::json mTileMap;
 	class Texture* mTexture;
 	float mRhombusWidth;
 	float mRhombusHeight;
 	float mTextureWidth;
 	float mTextureHeight;
+	Vec2 colVec, rowVec;
 };

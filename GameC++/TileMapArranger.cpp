@@ -7,6 +7,8 @@
 #include <sstream>
 #include <SDL/SDL.h>
 
+using json = nlohmann::json;
+
 TileMapArranger::TileMapArranger(Game* game)
 	: mGame(game)
 	, mTexture(nullptr)
@@ -14,6 +16,8 @@ TileMapArranger::TileMapArranger(Game* game)
 	, mTextureHeight(64)
 	, mRhombusWidth(64)
 	, mRhombusHeight(32)
+	, colVec(Vec2(mRhombusWidth/2, -mRhombusHeight/2))
+	, rowVec(Vec2(-mRhombusWidth/2, -mRhombusHeight/2))
 {
 
 }
@@ -28,24 +32,52 @@ void TileMapArranger::setTexture(Texture* texture)
 	mTexture = texture;
 }
 
+Vec2 TileMapArranger::culcTilePos(int row, int col)
+{
+	return row * rowVec + col * colVec;
+}
+
+const unsigned FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
+const unsigned FLIPPED_VERTICALLY_FLAG = 0x40000000;
+const unsigned FLIPPED_DIAGONALLY_FLAG = 0x20000000;
+const unsigned ROTATED_HEXAGONAL_120_FLAG = 0x10000000;
+
 void TileMapArranger::arrange()
 {
-	int layer = 0;
-	for (int row = 0; row < mTileMap.size(); ++row)
+	for (int layer = 0; layer < mTileMap["layers"].size(); ++layer)
 	{
-		for (int col = 0; col < mTileMap[row].size(); ++col)
+		for (int chunk = 0; chunk < mTileMap["layers"][layer]["chunks"].size(); ++chunk)
 		{
-			if (mTileMap[row][col] == -1)continue;
-			int drawOrder = row + col;
-			Tile* tile = new Tile(mGame, drawOrder);
-			tile->setMapPos(Vec3(col, row, layer));
-			tile->getSprite()->setTexture(mTexture);
-			tile->getSprite()->setTexWidth(mTextureWidth);
-			tile->getSprite()->setTexHeight(mTextureHeight);
-			tile->getSprite()->setSpriteVerts(createSpriteVerts(mTileMap[row][col]));
-			float x = (col- row) * static_cast<float>(mRhombusWidth) / 2;
-			float y = -(row + col) * static_cast<float>(mRhombusHeight) / 2;
-			tile->setPosition(Vec2(x,y));
+			json curChunk = mTileMap["layers"][layer]["chunks"][chunk];
+			std::vector<uint32_t>data = curChunk["data"].get<std::vector<uint32_t>>();
+			int cx = curChunk["x"].get<int>();
+			int cy = curChunk["y"].get<int>();
+			int cwidth = curChunk["width"].get<int>();
+			int cheight = curChunk["height"].get<int>();
+			for (int row = 0; row < cheight; ++row)
+			{
+				for (int col = 0; col < cwidth; ++col)
+				{
+					int index = cwidth * row + col;
+					if (data[index] <= 0)continue;
+					//上位4bit(タイルの状態)を0にし代入
+					uint32_t localTileID = data[index] & ~(FLIPPED_HORIZONTALLY_FLAG | 
+						                                   FLIPPED_VERTICALLY_FLAG | 
+						                                   FLIPPED_DIAGONALLY_FLAG | 
+						                                   ROTATED_HEXAGONAL_120_FLAG);
+					int x = row + cy;
+					int y = col + cx;
+					int drawOrder = x + y + 2 * layer;
+					Tile* tile = new Tile(mGame, drawOrder);
+					tile->getSprite()->setTexture(mTexture);
+					tile->getSprite()->setTexWidth(mTextureWidth);
+					tile->getSprite()->setTexHeight(mTextureHeight);
+					uint32_t firstGID = 1; // タイルセットのオフセット
+					tile->getSprite()->setSpriteVerts(createSpriteVerts(localTileID - firstGID));
+					Vec2 pos = culcTilePos(x, y);
+					tile->setPosition(pos);
+				}
+			}
 		}
 	}
 }
@@ -54,14 +86,7 @@ void TileMapArranger::setTileMap(std::string fileName)
 {
 	std::ifstream ifs(fileName);
 	if (!ifs) SDL_Log("failed to find tile map file");
-	std::string line;
-	while (std::getline(ifs, line))
-	{
-		std::vector<std::string>str = split(line, ',');
-		std::vector<int>ivec;
-		for (auto& s : str)ivec.emplace_back(std::stoi(s));
-		mTileMap.push_back(ivec);
-	}
+	mTileMap = json::parse(ifs);
 }
 
 std::vector<std::string> TileMapArranger::split(std::string& str, char delimiter)
